@@ -42,6 +42,4 @@ public class Application {
             System.out.println("provide an argument to start an application");
         }
     }
-
-
 }
