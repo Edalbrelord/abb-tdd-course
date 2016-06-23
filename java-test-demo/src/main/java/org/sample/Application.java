@@ -1,5 +1,6 @@
 package org.sample;
 
+import org.sample.applications.Konakart;
 import org.sample.applications.Sort;
 import org.sample.config.ApplicationConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -36,6 +37,11 @@ public class Application {
                     Sort sort = applicationContext.getBean(Sort.class);
                     sort.run();
 
+                    break;
+
+                case "konakart":
+                    Konakart konakart = applicationContext.getBean(Konakart.class);
+                    konakart.doRun();
                     break;
             }
         } else {
