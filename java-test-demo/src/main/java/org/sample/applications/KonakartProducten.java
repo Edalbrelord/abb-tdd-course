@@ -1,12 +1,10 @@
 package org.sample.applications;
 
 import com.konakart.app.DataDescConstants;
+import com.konakart.ws.KKWSEngIf;
 import com.konakart.wsapp.DataDescriptor;
-import com.konakart.app.KKException;
 import com.konakart.wsapp.Product;
 import com.konakart.wsapp.ProductSearch;
-import com.konakart.appif.*;
-import com.konakart.ws.KKWSEngIf;
 import com.konakart.wsapp.Products;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,32 +29,21 @@ public class KonakartProducten {
 
         getProductWithName("Warner");
 
-        getProductWithDescription("Spanish");
+        getProductWithDescription("Woningrapport");
     }
 
-    Products getProductsWithCategory(int categoryId){
+    public Products getProductsWithCategory(int categoryId) {
         Products products = null;
 
-        DataDescriptor dataDesc = new DataDescriptor();
-        dataDesc.setOrderBy(DataDescConstants.ORDER_BY_RATING);
-        dataDesc.setLimit(100);
-        dataDesc.setOffset(0);
+        DataDescriptor dataDescriptor = getDefaultDataDescriptor();
+        dataDescriptor.setOrderBy(DataDescConstants.ORDER_BY_RATING);
+        dataDescriptor.setLimit(100);
 
-        ProductSearch productSearch = new ProductSearch();
-        productSearch.setManufacturerId(-100);              // -100 == Search all
-        productSearch.setCategoryId(3);                  // -100 == Search all
-        productSearch.setSearchInSubCats(true);
-//        productSearch.setSearchAllStores(false);
-//        productSearch.setProductType(-1);
+        ProductSearch productSearch = getDefaultProductSearch();
+        productSearch.setCategoryId(categoryId);
 
         try {
-            Products allProducts = konakart.getAllProducts(null, dataDesc, -1);
-            products = konakart.searchForProducts(null, dataDesc, productSearch, -1);
-            System.out.println("Found " + products.getTotalNumProducts() + " products:");
-
-            for (Product product : products.getProductArray()) {
-                System.out.println(product.getManufacturerName() + " - " + product.getName() + ": " + product.getDescription());
-            }
+            products = konakart.searchForProducts(null, dataDescriptor, productSearch, -1);
         } catch (RemoteException e) {
             log.error(e);
         }
@@ -64,24 +51,40 @@ public class KonakartProducten {
         return products;
     }
 
-    private void getProductWithDescription(String name) {
-        System.out.println("Get products with description: " + name);
+    public Product getAvailableProduct(){
+        Product product = null;
 
-        DataDescriptor dataDesc = new DataDescriptor();
-        dataDesc.setLimit(100);
+        DataDescriptor dataDescriptor = getDefaultDataDescriptor();
+        dataDescriptor.setLimit(1);
 
-        ProductSearch productSearch = new ProductSearch();
-        productSearch.setSearchText(name);
+        ProductSearch productSearch = getDefaultProductSearch();
+        productSearch.setQuantityGreaterThan(0);
+
+        try {
+            Products products = konakart.searchForProducts(null, dataDescriptor, productSearch, -1);
+            product = products.getProductArray()[0];
+        } catch (RemoteException e) {
+            log.error(e);
+        }
+
+        return product;
+    }
+
+    private void getProductWithDescription(String description) {
+        System.out.println("Get products with description: " + description);
+
+        DataDescriptor dataDescriptor = getDefaultDataDescriptor();
+        dataDescriptor.setShowInvisible(true);
+
+        ProductSearch productSearch = getDefaultProductSearch();
+        productSearch.setSearchText(description);
         productSearch.setFillDescription(true);
         productSearch.setWhereToSearch(com.konakart.app.ProductSearch.SEARCH_IN_PRODUCT_DESCRIPTION);
 
+//        TODO: Not returning products...
         try {
-            Products products = konakart.searchForProducts(null, dataDesc, productSearch, -1);
-            System.out.println("Found " + products.getTotalNumProducts() + " products:");
-
-            for (Product product : products.getProductArray()) {
-                System.out.println(product.getManufacturerName() + " - " + product.getName() + ": " + product.getDescription());
-            }
+            Products products = konakart.searchForProducts(null, dataDescriptor, productSearch, -1);
+            printProducts(products);
 
         } catch (RemoteException e) {
             log.error(e);
@@ -91,20 +94,15 @@ public class KonakartProducten {
     private void getProductWithName(String name) {
         System.out.println("Get products with name: " + name);
 
-        DataDescriptor dataDesc = new DataDescriptor();
-        dataDesc.setLimit(100);
+        DataDescriptor dataDescriptor = getDefaultDataDescriptor();
 
-        ProductSearch productSearch = new ProductSearch();
+        ProductSearch productSearch = getDefaultProductSearch();
         productSearch.setSearchText(name);
         productSearch.setFillDescription(true);
 
         try {
-            Products products = konakart.searchForProducts(null, dataDesc, productSearch, -1);
-            System.out.println("Found " + products.getTotalNumProducts() + " products:");
-
-            for (Product product : products.getProductArray()) {
-                System.out.println(product.getManufacturerName() + " - " + product.getName() + ": " + product.getDescription());
-            }
+            Products products = konakart.searchForProducts(null, dataDescriptor, productSearch, -1);
+            printProducts(products);
 
         } catch (RemoteException e) {
             log.error(e);
@@ -113,20 +111,43 @@ public class KonakartProducten {
 
     private void getAmountOfProducts(int amount) {
         System.out.println("Get " + amount + " products");
-        DataDescriptor dataDesc = new DataDescriptor();
-        dataDesc.setLimit(amount);
 
-        ProductSearch prodSearch = new ProductSearch();
+        DataDescriptor dataDescriptor = getDefaultDataDescriptor();
+        dataDescriptor.setLimit(amount);
+
+        ProductSearch prodSearch = getDefaultProductSearch();
+
         try {
-            Products products = konakart.searchForProducts(null, dataDesc, prodSearch, -1);
-            System.out.println("Found " + products.getTotalNumProducts() + " products:");
-
-            for (Product product : products.getProductArray()) {
-                System.out.println(product.getManufacturerName() + " - " + product.getName() + ": " + product.getDescription());
-            }
+            Products products = konakart.searchForProducts(null, dataDescriptor, prodSearch, -1);
+            printProducts(products);
 
         } catch (RemoteException e) {
             log.error(e);
+        }
+    }
+
+    private DataDescriptor getDefaultDataDescriptor() {
+        DataDescriptor dataDesc = new DataDescriptor();
+        dataDesc.setOffset(0);
+        dataDesc.setLimit(100);
+
+        return dataDesc;
+    }
+
+    private ProductSearch getDefaultProductSearch() {
+        ProductSearch productSearch = new ProductSearch();
+        productSearch.setManufacturerId(-100);              // -100 == Search all
+        productSearch.setCategoryId(3);                  // -100 == Search all
+        productSearch.setSearchInSubCats(true);
+
+        return productSearch;
+    }
+
+    private void printProducts(Products products) {
+        log.info("Found " + products.getProductArray().length + " products:");
+
+        for (Product product : products.getProductArray()) {
+            log.debug(product.getManufacturerName() + " - " + product.getName() + ": " + product.getDescription());
         }
     }
 }

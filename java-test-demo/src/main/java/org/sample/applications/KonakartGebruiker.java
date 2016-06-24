@@ -23,9 +23,7 @@ public class KonakartGebruiker {
     public KonakartGebruiker() {
     }
 
-    public void registreerGebruiker(){
-        System.out.println("Registreer gebruiker");
-
+    public CustomerRegistration getCustomerRegistrationStefan(){
         CustomerRegistration stefan = new CustomerRegistration();
         stefan.setFirstName("Stefan");
         stefan.setLastName("van der Grift");
@@ -40,10 +38,19 @@ public class KonakartGebruiker {
         stefan.setCountryId(150);
         stefan.setZoneId(149);
 
+        return stefan;
+    }
+
+    public int registreerGebruiker(CustomerRegistration customerRegistration){
+        int customerId = 0;
+
+        System.out.println("Registreer gebruiker: " + customerRegistration.getFirstName());
+
         try {
-            int customerId = konakart.registerCustomer(stefan);
-        } catch (RemoteException e) {
-            log.error("Customer bestaat al", e);
+            customerId = konakart.registerCustomer(customerRegistration);
+        } catch (RemoteException registerCustomerException) {
+            log.info("Customer bestaat al");
+            log.debug("Customer bestaat al", registerCustomerException);
         }
 
         try {
@@ -52,5 +59,24 @@ public class KonakartGebruiker {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        return customerId;
+    }
+
+    public int loginGebruiker(String emailAddress, String password){
+        int customerId = 0;
+
+        try {
+            String sessionId = konakart.login(emailAddress, password);
+            Customer customer = konakart.getCustomer(sessionId);
+            if(customer != null){
+                customerId = customer.getId();
+            }
+
+        } catch (RemoteException loginException) {
+            log.error("Cannot login user", loginException);
+        }
+
+        return customerId;
     }
 }

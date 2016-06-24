@@ -5,8 +5,6 @@ import com.konakart.util.KKConstants;
 import com.konakart.ws.KKWSEngIf;
 import com.konakart.ws.KKWSEngIfServiceLocator;
 import com.konakart.wsapp.EngineConfig;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.EngineConfigurationFactoryDefault;
 import org.apache.axis.configuration.EngineConfigurationFactoryServlet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,16 +25,13 @@ public class KonakartConfig {
 
         KKWSEngIfServiceLocator kkwsEngIfServiceLocator = new KKWSEngIfServiceLocator();
 
-        KKWSEngIf kkWebServiceEng = kkwsEngIfServiceLocator.getKKWebServiceEng();
-        EngineConfig engConf = kkWebServiceEng.getEngConf();
-        engConf.setAppPropertiesFileName(KKConstants.KONAKART_APP_PROPERTIES_FILE);
-        engConf.setPropertiesFileName(KKConstants.KONAKART_PROPERTIES_FILE);
-        engConf.setStoreId(KKConstants.KONAKART_DEFAULT_STORE_ID);
+//        KKWSEngIf kkWebServiceEng = kkwsEngIfServiceLocator.getKKWebServiceEng();
 
-        EngineConfigurationFactoryServlet.newFactory(null);
+//        EngineConfig engConf = kkWebServiceEng.getEngConf();
+//        engConf.setAppPropertiesFileName(KKConstants.KONAKART_APP_PROPERTIES_FILE);
+//        engConf.setPropertiesFileName(KKConstants.KONAKART_PROPERTIES_FILE);
+//        engConf.setStoreId(KKConstants.KONAKART_DEFAULT_STORE_ID);
 
         return kkwsEngIfServiceLocator.getKKWebServiceEng(new URL("http://localhost:8780/konakart/services/KKWebServiceEng"));
     }
-
-
 }
