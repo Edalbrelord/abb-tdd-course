@@ -2,10 +2,7 @@ package org.sample.applications;
 
 import com.konakart.app.DataDescConstants;
 import com.konakart.ws.KKWSEngIf;
-import com.konakart.wsapp.DataDescriptor;
-import com.konakart.wsapp.Product;
-import com.konakart.wsapp.ProductSearch;
-import com.konakart.wsapp.Products;
+import com.konakart.wsapp.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +24,9 @@ public class KonakartProducten {
     void zoekProducten() {
         getAmountOfProducts(10);
 
-        getProductWithName("Warner");
+        getProductWithName("Bosch");
 
-        getProductWithDescription("Woningrapport");
+        getProductWithDescription("Soft-Touch");
     }
 
     public Products getProductsWithCategory(int categoryId) {
@@ -59,6 +56,7 @@ public class KonakartProducten {
 
         ProductSearch productSearch = getDefaultProductSearch();
         productSearch.setQuantityGreaterThan(0);
+        productSearch.setSearchText("Bosch");
 
         try {
             Products products = konakart.searchForProducts(null, dataDescriptor, productSearch, -1);
@@ -137,7 +135,7 @@ public class KonakartProducten {
     private ProductSearch getDefaultProductSearch() {
         ProductSearch productSearch = new ProductSearch();
         productSearch.setManufacturerId(-100);              // -100 == Search all
-        productSearch.setCategoryId(3);                  // -100 == Search all
+        productSearch.setCategoryId(-100);                  // -100 == Search all
         productSearch.setSearchInSubCats(true);
 
         return productSearch;

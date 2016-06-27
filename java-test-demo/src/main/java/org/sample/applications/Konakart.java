@@ -39,26 +39,52 @@ public class Konakart {
         CustomerRegistration stefan = konakartGebruiker.getCustomerRegistrationStefan();
         konakartGebruiker.registreerGebruiker(stefan);
 
-        orderProductAsAnonymousUer();
+        orderProductAsStefan();
     }
 
-    private void orderProductAsAnonymousUer() {
+    private void orderProductAsStefan() {
         try {
-//            Login (default) user
+
+//            Login user
             CustomerRegistration stefan = konakartGebruiker.getCustomerRegistrationStefan();
             String sessionId = konakart.login(stefan.getEmailAddr(), stefan.getPassword());
             Customer customer = konakart.getCustomer(sessionId);
 
             Basket[] basketItemArray = new Basket[0];
 
-            Product product = konakartProducten.getAvailableProduct();
+            Product prod = konakartProducten.getAvailableProduct();
+
+//            Retrieve full product with options
+            Product product = konakart.getProduct(sessionId, prod.getId(), -1);
 
             List<Basket> basketProducts = new ArrayList<Basket>();
 
 //            Add product to basket (Product + quantity + additional info)
             Basket basketProduct = new Basket();
+            basketProduct.setProduct(product);
             basketProduct.setQuantity(1);
             basketProduct.setProductId(product.getId());
+
+            // Create an Option and add a couple of the available product options
+            List<Option> options = new ArrayList<>();
+            Option option1 = new Option();
+
+            int optionId = 0;
+            int optionValueId = 0;
+            for( Option option : product.getOpts()){
+                if("flightcase".equals(option.getCode()) && "kadastrale_aanduiding".equals(option.getValueCode())){
+                    optionId = option.getId();
+                    optionValueId = option.getValueId();
+                }
+            }
+
+            option1.setId(optionId);
+            option1.setValueId(optionValueId);
+            option1.setCustomerText("NLGOES123");
+
+            options.add(option1);
+
+            basketProduct.setOpts(options.toArray(new Option[options.size()]));
 
 //            Push basket to server
             int basketId = konakart.addToBasket(sessionId, customer.getId(), basketProduct);
