@@ -90,6 +90,7 @@ public class Konakart {
             int basketId = konakart.addToBasket(sessionId, customer.getId(), basketProduct);
             log.info("Created basket with ID: " + basketId);
 
+            // Retrieve basket (for overview), also needed as Konakart adds additional values
             Basket[] basketItemsPerCustomer = konakart.getBasketItemsPerCustomer(sessionId, customer.getId(), -1);
 
             Order order = konakart.createOrder(sessionId, basketItemsPerCustomer, -1);
@@ -125,7 +126,5 @@ public class Konakart {
         } catch (RemoteException e) {
             log.error("Er trad een fout op tijdens het toevoegen aan de basket", e);
         }
-
-
     }
 }
