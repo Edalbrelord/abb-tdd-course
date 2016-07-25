@@ -1,0 +1,13 @@
+language: java
+# skip the default install (mvn install -DskipTests=true) to speed up the build
+install: true
+script: cd java-test-demo && mvn -q test
+jdk:
+- openjdk8
+
+# get us on the new container based builds, we're not using any fancyness
+sudo: false
+
+branches:
+  only:
+  - solutions
