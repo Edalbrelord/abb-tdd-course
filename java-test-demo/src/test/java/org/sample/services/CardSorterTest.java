@@ -7,6 +7,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CardSorterTest {
@@ -55,5 +56,10 @@ public class CardSorterTest {
         String[] wrongCards = {"♥2", "♣561"};
 
         cardSorter.sort(wrongCards);
+    }
+
+    @Test
+    public void itShouldFail(){
+        fail("Fail to show error on pull request");
     }
 }
