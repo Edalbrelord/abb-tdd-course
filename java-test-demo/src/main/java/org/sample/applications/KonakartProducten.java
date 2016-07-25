@@ -53,10 +53,10 @@ public class KonakartProducten {
 
         DataDescriptor dataDescriptor = getDefaultDataDescriptor();
         dataDescriptor.setLimit(1);
+        dataDescriptor.setShowInvisible(true);
 
         ProductSearch productSearch = getDefaultProductSearch();
-        productSearch.setQuantityGreaterThan(0);
-        productSearch.setSearchText("Bosch");
+        productSearch.setSearchText("Rotak 40 Ergoflex");
 
         try {
             Products products = konakart.searchForProducts(null, dataDescriptor, productSearch, -1);
